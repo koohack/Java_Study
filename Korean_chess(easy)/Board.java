@@ -73,10 +73,11 @@ public class Board {
 	static HashMap<String, gameObject> finder = new HashMap<String, gameObject>();
 	static Scanner scanner = new Scanner(System.in);
 
-	static int whosturn=0;// 0 for green, 1 for red
+	static int whosturn=1;// 0 for green, 1 for red
 
 	static ArrayList<ArrayList<Integer>> canmove=new ArrayList<ArrayList<Integer>>();
 
+	static int skip=0;
 
 	Board(boolean withFile) {
 		/* Your code */
@@ -162,6 +163,17 @@ public class Board {
 		finder.put("e3", greenPawn3);
 		finder.put("g3", greenPawn4);
 		finder.put("i3", greenPawn5);
+
+		for(int i=0; i<10; i++){
+			for(int j=0; j<9; j++){
+				String hap="";
+				char one=(char)(97+j);
+				char two=(char)(37-i);
+				hap=hap+one+two;
+				marker[i][j]=hap;
+			}
+		}
+
 	}
 
 	public boolean isFinish(boolean withFile) {
@@ -188,6 +200,7 @@ public class Board {
 
 						whosturn=1;
 						if (type=='K'){
+							kingCanMove(selected);
 
 						}else if(type=='R'){
 
@@ -200,13 +213,13 @@ public class Board {
 						}else  if(type=='P'){
 
 						}
-
+						break;
 
 					}else if(color=='r' && whosturn==1){
 
 						whosturn=0;
 						if (type=='K'){
-
+							kingCanMove(selected);
 						}else if(type=='R'){
 
 						}else if(type=='E'){
@@ -218,15 +231,14 @@ public class Board {
 						}else  if(type=='P'){
 
 						}
-
-
+						break;
 
 					}else{
 						System.out.println("Please select other piece.");
 						continue;
 					}
 
-					break;
+
 				}else{
 					System.out.println("Please select other piece.");
 				}
@@ -256,26 +268,48 @@ public class Board {
 			int maxleft=3;
 			int maxright=5;
 
-			if(nowx-1 >= maxup){
+			if(nowx-1 >= maxup && isNotMyTeam(king, nowx-1, nowy)){
 				ArrayList<Integer> temp=new ArrayList<Integer>();
 				temp.add(nowx-1);
 				temp.add(nowy);
 				canmove.add(temp);
 			}
-			if(nowx+1 <= maxdown){
+			if(nowx+1 <= maxdown && isNotMyTeam(king, nowx+1, nowy)){
 				ArrayList<Integer> temp=new ArrayList<Integer>();
 				temp.add(nowx+1);
 				temp.add(nowy);
 				canmove.add(temp);
 			}
-
-
-
+			if(nowy-1 >= maxleft && isNotMyTeam(king, nowx, nowy-1)){
+				ArrayList<Integer> temp=new ArrayList<Integer>();
+				temp.add(nowx);
+				temp.add(nowy-1);
+				canmove.add(temp);
+			}
+			if(nowy+1 <= maxright && isNotMyTeam(king, nowx, nowy+1)){
+				ArrayList<Integer> temp=new ArrayList<Integer>();
+				temp.add(nowx);
+				temp.add(nowy+1);
+				canmove.add(temp);
+			}
 
 
 
 		}else if(king.getColor()=='g'){
 
+		}
+	}
+
+	public boolean isNotMyTeam(gameObject me, int targetx, int targety){
+		char myType=me.getType();
+
+		gameObject target=finder.get(marker[targetx][targety]);
+		if(target==null){
+			return true;
+		}else if(target.getType()!=myType){
+			return true;
+		}else{
+			return false;
 		}
 	}
 
