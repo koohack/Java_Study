@@ -712,7 +712,7 @@ public class Board {
 		}
 
 		if(nowy-1>=0){
-
+			gameObject left=finder.get(marker[nowx+1][nowy]);
 		}
 
 		if(nowy+1<10){
