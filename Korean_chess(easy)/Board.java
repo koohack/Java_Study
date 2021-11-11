@@ -29,7 +29,13 @@ public class Board {
 
 	static ArrayList<ArrayList<Integer>> canmove=new ArrayList<ArrayList<Integer>>();
 
+	static gameObject selected;
+	static String selectedPosition;
+
 	static int skip=0;
+
+	static ArrayList<ArrayList<String>> filemove=new ArrayList<ArrayList<String>>();
+	static int fileReadPoint=0;
 
 	Board(boolean withFile) {
 		/* Your code */
@@ -51,7 +57,6 @@ public class Board {
 				finder.put(marker[i][j], empty);
 			}
 		}
-
 
 		// Han(Red)
 		// First Line
@@ -83,7 +88,7 @@ public class Board {
 		// First Line
 		changeFinder(9,0,'g',' ', 'R');
 		changeFinder(9,8,'g',' ', 'R');
-		changeFinder(8,1,'g',' ', 'N');//변경
+		changeFinder(9,1,'g',' ', 'N');//변경
 		changeFinder(9,7,'g',' ', 'N');
 		changeFinder(9,2,'g',' ', 'E');
 		changeFinder(9,6,'g',' ', 'E');
@@ -100,15 +105,47 @@ public class Board {
 
 		// Last Line
 		changeFinder(6,0,'g',' ', 'P');
-		changeFinder(6,1,'g',' ', 'P');//변경
-		changeFinder(7,4,'g',' ', 'P');//변경
+		changeFinder(6,2,'g',' ', 'P');//변경
+		changeFinder(6,4,'g',' ', 'P');//변경
 		changeFinder(6,6,'g',' ', 'P');
 		changeFinder(6,8,'g',' ', 'P');
+
+		if (withFile){
+
+		}
+
+
 	}
 
 	public boolean isFinish(boolean withFile) {
 		/* Your code */
-		return false;
+		if (withFile){
+			int count=0;
+			for(String key : finder.keySet()){
+				if(finder.get(key).getType()=='K'){
+					count++;
+				}
+			}
+			if(count<2){
+				System.out.println("The game was finished!!");
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			int count=0;
+			for(String key : finder.keySet()){
+				if(finder.get(key).getType()=='K'){
+					count++;
+				}
+			}
+			if(count<2){
+				System.out.println("The game was finished!!");
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 	
 	public void selectObject(boolean withFile) {
@@ -120,7 +157,8 @@ public class Board {
 				System.out.print("Select piece : ");
 				String position=scanner.next();
 
-				gameObject selected=finder.get(position);
+				selected=finder.get(position);
+				selectedPosition=position;
 
 				if(selected!=null){
 					char type=selected.getType();
@@ -132,7 +170,7 @@ public class Board {
 						if (type=='K'){
 							kingCanMove(selected, withFile);
 						}else if(type=='R'){
-
+							rookCanMove(selected, withFile);
 						}else if(type=='E'){
 							elephantCanMove(selected, withFile);
 						}else if(type=='G'){
@@ -140,7 +178,7 @@ public class Board {
 						}else if(type=='C'){
 							cannonCanMove(selected, withFile);
 						}else  if(type=='P'){
-
+							pwanCanMove(selected, withFile);
 						}else if(type=='N'){
 							knightCanMove(selected, withFile);
 						}
@@ -152,7 +190,7 @@ public class Board {
 						if (type=='K'){
 							kingCanMove(selected, withFile);
 						}else if(type=='R'){
-
+							rookCanMove(selected, withFile);
 						}else if(type=='E'){
 							elephantCanMove(selected, withFile);
 						}else if(type=='G'){
@@ -160,7 +198,7 @@ public class Board {
 						}else if(type=='C'){
 							cannonCanMove(selected, withFile);
 						}else  if(type=='P'){
-
+							pwanCanMove(selected, withFile);
 						}else if(type=='N'){
 							knightCanMove(selected, withFile);
 						}
@@ -176,7 +214,8 @@ public class Board {
 			}
 		}
 	}
-	
+
+	//check point
 	public void moveObject(boolean withFile) {
 		/* Your code */
 		if(skip==1){
@@ -189,7 +228,43 @@ public class Board {
 		}else {
 			System.out.print("Move piece : ");
 			String position=scanner.next();
+
+			gameObject movePoint=finder.get(position);
+			if (movePoint.getTarget()!='*'){
+				System.out.println("Please select other move piece.");
+				moveObject(withFile);
+			}else{
+				changeObject(selectedPosition, position);
+
+				for (String key : finder.keySet()){
+					gameObject temp=finder.get(key);
+					if(temp.getTarget()=='*'){
+						temp.setTarget(' ');
+						finder.replace(key, temp);
+					}
+				}
+			}
+			selectedPosition="";
 		}
+	}
+
+	public void changeObject(String sp, String mp){
+		gameObject temp1=finder.get(sp);
+		gameObject temp2=finder.get(mp);
+		int x1=temp1.getX();
+		int y1=temp1.getY();
+		int x2=temp2.getX();
+		int y2=temp2.getY();
+		temp1.setX(x2);
+		temp1.setY(y2);
+		temp2.setX(x1);
+		temp2.setY(y1);
+
+		temp2.setType(' ');
+		temp2.setColor(' ');
+
+		finder.replace(sp, temp2);
+		finder.replace(mp, temp1);
 	}
 
 	public void kingCanMove(gameObject king, boolean withFile){
@@ -592,7 +667,7 @@ public class Board {
 		}
 
 		int rightend;
-		for(int i=nowy+1; i<10; i++){
+		for(int i=nowy+1; i<9; i++){
 			gameObject temp=finder.get(marker[nowx][i]);
 			if(temp.getType()=='C'){
 				break;
@@ -601,8 +676,8 @@ public class Board {
 				continue;
 			}else{
 				rightend=i;
-				if(rightend<9){
-					for(int j=rightend+1; j<10; j++){
+				if(rightend<8){
+					for(int j=rightend+1; j<9; j++){
 						if(finder.get(marker[nowx][j]).getType()!=' '){
 							if(isNotMyTeam(cannon, nowx, j) && finder.get(marker[nowx][j]).getType()!='C'){
 								ArrayList<Integer> t=new ArrayList<Integer>();
@@ -651,9 +726,9 @@ public class Board {
 			gameObject up=finder.get(marker[nowx-1][nowy]);
 			if(up.getType()==' '){
 				//right
-				if(nowx-2>=0 && nowy+1<10){
+				if(nowx-2>=0 && nowy+1<9){
 					if (finder.get(marker[nowx-2][nowy+1]).getType()==' '){
-						if (nowx-3>=0 && nowy+2<10){
+						if (nowx-3>=0 && nowy+2<9){
 							if (isNotMyTeam(elephant, nowx-3, nowy+2)){
 								ArrayList<Integer> t=new ArrayList<Integer>();
 								t.add(nowx-3);
@@ -683,9 +758,9 @@ public class Board {
 			gameObject down=finder.get(marker[nowx+1][nowy]);
 			if(down.getType()==' '){
 				//right
-				if(nowx+2<10 && nowy+1<10){
+				if(nowx+2<10 && nowy+1<9){
 					if (finder.get(marker[nowx+2][nowy+1]).getType()==' '){
-						if (nowx+3<10 && nowy+2<10){
+						if (nowx+3<10 && nowy+2<9){
 							if (isNotMyTeam(elephant, nowx+3, nowy+2)){
 								ArrayList<Integer> t=new ArrayList<Integer>();
 								t.add(nowx+3);
@@ -712,16 +787,68 @@ public class Board {
 		}
 
 		if(nowy-1>=0){
-			gameObject left=finder.get(marker[nowx+1][nowy]);
+			gameObject left=finder.get(marker[nowx][nowy-1]);
 			if (left.getType()==' '){
+				//right
+				if(nowx+1<10 && nowy-2>=0){
+					if (finder.get(marker[nowx+1][nowy-2]).getType()==' '){
+						if (nowx+2<10 && nowy-3>=0){
+							if (isNotMyTeam(elephant, nowx+2, nowy-3)){
+								ArrayList<Integer> t=new ArrayList<Integer>();
+								t.add(nowx+2);
+								t.add(nowy-3);
+								canmove.add(t);
+							}
+						}
+					}
+				}
 
+				if(nowx-1>=0 && nowy-2>=0){
+					if (finder.get(marker[nowx-1][nowy-2]).getType()==' '){
+						if (nowx-2>=0 && nowy-3>=0){
+							if (isNotMyTeam(elephant, nowx-2, nowy-3)){
+								ArrayList<Integer> t=new ArrayList<Integer>();
+								t.add(nowx-2);
+								t.add(nowy-3);
+								canmove.add(t);
+							}
+						}
+					}
+				}
 			}
 		}
 
 		if(nowy+1<10){
+			gameObject right=finder.get(marker[nowx][nowy-1]);
+			if (right.getType()==' '){
+				//right
+				if(nowx+1<10 && nowy+2<9){
+					if (finder.get(marker[nowx+1][nowy+2]).getType()==' '){
+						if (nowx+2<10 && nowy+3<9){
+							if (isNotMyTeam(elephant, nowx+2, nowy+3)){
+								ArrayList<Integer> t=new ArrayList<Integer>();
+								t.add(nowx+2);
+								t.add(nowy+3);
+								canmove.add(t);
+							}
+						}
+					}
+				}
 
+				if(nowx-1>=0 && nowy+2<9){
+					if (finder.get(marker[nowx-1][nowy+2]).getType()==' '){
+						if (nowx-2>=0 && nowy+3<9){
+							if (isNotMyTeam(elephant, nowx-2, nowy+3)){
+								ArrayList<Integer> t=new ArrayList<Integer>();
+								t.add(nowx-2);
+								t.add(nowy+3);
+								canmove.add(t);
+							}
+						}
+					}
+				}
+			}
 		}
-
 
 		int length=canmove.size();
 		if(length==0){
@@ -750,7 +877,7 @@ public class Board {
 		if(nowx-1>=0){
 			gameObject up=finder.get(marker[nowx-1][nowy]);
 			if (up.getType()==' '){
-				if(nowx-2>=0 && nowy+1 < 10){
+				if(nowx-2>=0 && nowy+1 < 9){
 					if(isNotMyTeam(knight, nowx-2, nowy+1)){
 						ArrayList<Integer> t=new ArrayList<Integer>();
 						t.add(nowx-2);
@@ -773,7 +900,7 @@ public class Board {
 		if(nowx+1<10){
 			gameObject down=finder.get(marker[nowx+1][nowy]);
 			if (down.getType()==' '){
-				if(nowx+2<10 && nowy+1<10){
+				if(nowx+2<10 && nowy+1<9){
 					if (isNotMyTeam(knight, nowx+2, nowy+1)){
 						ArrayList<Integer> t=new ArrayList<Integer>();
 						t.add(nowx+2);
@@ -790,10 +917,10 @@ public class Board {
 			}
 		}
 
-		if(nowy+1 < 10){
+		if(nowy+1 < 9){
 			gameObject right=finder.get(marker[nowx][nowy+1]);
 			if(right.getType()==' '){
-				if (nowx+1<10 && nowy+2<10){
+				if (nowx+1<10 && nowy+2<9){
 					if (isNotMyTeam(knight, nowx+1, nowy+2)){
 						ArrayList<Integer> t=new ArrayList<Integer>();
 						t.add(nowx+1);
@@ -801,7 +928,7 @@ public class Board {
 						canmove.add(t);
 					}
 				}
-				if(nowx-1>=0 && nowy+2<10){
+				if(nowx-1>=0 && nowy+2<9){
 					if (isNotMyTeam(knight, nowx-1, nowy+2)){
 						ArrayList<Integer> t=new ArrayList<Integer>();
 						t.add(nowx-1);
@@ -853,12 +980,185 @@ public class Board {
 		printBoard(withFile);
 	}
 
-	public void rookCanMove(gameObject rook){
+	public void rookCanMove(gameObject rook, boolean withFile){
+		canmove=new ArrayList<ArrayList<Integer>>();
+		int nowx=rook.getX();
+		int nowy=rook.getY();
 
+		if(nowx+1<10) {
+			for (int i = nowx + 1; i < 10; i++) {
+				gameObject temp = finder.get(marker[i][nowy]);
+				if (temp.getType() != ' ') {
+					if (isNotMyTeam(rook, i, nowy)) {
+						ArrayList<Integer> t = new ArrayList<Integer>();
+						t.add(i);
+						t.add(nowy);
+						canmove.add(t);
+					}
+					break;
+				}else{
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(i);
+					t.add(nowy);
+					canmove.add(t);
+				}
+			}
+		}
+		if(nowx-1>=0){
+			for(int i=nowx-1; i>=0; i--){
+				gameObject temp =finder.get(marker[i][nowy]);
+				if (temp.getType()!=' '){
+					if (isNotMyTeam(rook, i, nowy)){
+						ArrayList<Integer> t = new ArrayList<Integer>();
+						t.add(i);
+						t.add(nowy);
+						canmove.add(t);
+					}
+					break;
+				}else{
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(i);
+					t.add(nowy);
+					canmove.add(t);
+				}
+			}
+		}
+		if(nowy+1<9){
+			for (int i=nowy+1; i<9; i++){
+				gameObject temp=finder.get(marker[nowx][i]);
+				if (temp.getType()!=' '){
+					if (isNotMyTeam(rook, nowx, i)){
+						ArrayList<Integer> t = new ArrayList<Integer>();
+						t.add(nowx);
+						t.add(i);
+						canmove.add(t);
+					}
+				}else{
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(nowx);
+					t.add(i);
+					canmove.add(t);
+				}
+			}
+		}
+		if(nowy-1>=0){
+			for (int i=nowy-1; i>=0; i--){
+				gameObject temp=finder.get(marker[nowx][i]);
+				if (temp.getType()!=' '){
+					if (isNotMyTeam(rook, nowx, i)){
+						ArrayList<Integer> t = new ArrayList<Integer>();
+						t.add(nowx);
+						t.add(i);
+						canmove.add(t);
+					}else{
+						ArrayList<Integer> t = new ArrayList<Integer>();
+						t.add(nowx);
+						t.add(i);
+						canmove.add(t);
+					}
+				}
+			}
+		}
+
+		int length=canmove.size();
+		if(length==0){
+			System.out.println("Please select other piece.");
+			skip=1;
+			return;
+		}
+
+		for(ArrayList<Integer> item : canmove) {
+			int x = item.get(0);
+			int y = item.get(1);
+			String position = marker[x][y];
+
+			gameObject temp = finder.get(position);
+			temp.setTarget('*');
+			finder.replace(position, temp);
+		}
+		printBoard(withFile);
 	}
 
-	public void pawnCanMove(gameObject pwan){
+	public void pwanCanMove(gameObject pwan, boolean withFile){
+		canmove=new ArrayList<ArrayList<Integer>>();
+		int nowx=pwan.getX();
+		int nowy=pwan.getY();
 
+		if(pwan.getColor()=='r'){
+			if (nowx+1 < 10){
+				gameObject temp=finder.get(marker[nowx+1][nowy]);
+				if (temp.getType()==' ' || isNotMyTeam(pwan, nowx+1, nowy)){
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(nowx+1);
+					t.add(nowy);
+					canmove.add(t);
+				}
+			}
+			if(nowy+1 < 9){
+				gameObject temp=finder.get(marker[nowx][nowy+1]);
+				if (temp.getType()==' ' || isNotMyTeam(pwan, nowx, nowy+1)){
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(nowx);
+					t.add(nowy+1);
+					canmove.add(t);
+				}
+			}
+			if(nowy-1 >=0){
+				gameObject temp= finder.get(marker[nowx][nowy-1]);
+				if (temp.getType()==' ' || isNotMyTeam(pwan, nowx, nowy-1)){
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(nowx);
+					t.add(nowy-1);
+					canmove.add(t);
+				}
+			}
+		}else{
+			if (nowx-1 >= 0){
+				gameObject temp=finder.get(marker[nowx-1][nowy]);
+				if (temp.getType()==' ' || isNotMyTeam(pwan, nowx-1, nowy)){
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(nowx-1);
+					t.add(nowy);
+					canmove.add(t);
+				}
+			}
+			if(nowy+1 < 9){
+				gameObject temp=finder.get(marker[nowx][nowy+1]);
+				if (temp.getType()==' ' || isNotMyTeam(pwan, nowx, nowy+1)){
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(nowx);
+					t.add(nowy+1);
+					canmove.add(t);
+				}
+			}
+			if(nowy-1 >=0){
+				gameObject temp= finder.get(marker[nowx][nowy-1]);
+				if (temp.getType()==' ' || isNotMyTeam(pwan, nowx, nowy-1)){
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(nowx);
+					t.add(nowy-1);
+					canmove.add(t);
+				}
+			}
+		}
+
+		int length=canmove.size();
+		if(length==0){
+			System.out.println("Please select other piece.");
+			skip=1;
+			return;
+		}
+
+		for(ArrayList<Integer> item : canmove) {
+			int x = item.get(0);
+			int y = item.get(1);
+			String position = marker[x][y];
+
+			gameObject temp = finder.get(position);
+			temp.setTarget('*');
+			finder.replace(position, temp);
+		}
+		printBoard(withFile);
 	}
 	
 	public void printBoard(boolean withFile) {
@@ -872,7 +1172,14 @@ public class Board {
 				janggi[temp.getX()][temp.getY()]=m+temp.getColor()+temp.getType()+temp.getTarget();
 			}
 
+			System.out.print("  ");
+			for (int i=0; i<9; i++){
+				System.out.print(" "+(char)(97+i)+" ");
+			}
+			System.out.println("");
+
 			for(int i=0; i<10; i++){
+				System.out.print((char)(57-i)+" ");
 				for(int j=0; j<9; j++){
 					if(j==8){
 						System.out.println(janggi[i][j]);
