@@ -1,5 +1,9 @@
 import com.sun.media.sound.JARSoundbankReader;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -36,8 +40,9 @@ public class Board {
 
 	static ArrayList<ArrayList<String>> filemove=new ArrayList<ArrayList<String>>();
 	static int fileReadPoint=0;
+	static int maxcom;
 
-	Board(boolean withFile) {
+	Board(boolean withFile) throws IOException {
 		/* Your code */
 		// Make mark
 		for(int i=0; i<10; i++){
@@ -102,7 +107,6 @@ public class Board {
 		changeFinder(7,1,'g',' ', 'C');
 		changeFinder(7,7,'g',' ', 'C');
 
-
 		// Last Line
 		changeFinder(6,0,'g',' ', 'P');
 		changeFinder(6,2,'g',' ', 'P');//변경
@@ -111,15 +115,29 @@ public class Board {
 		changeFinder(6,8,'g',' ', 'P');
 
 		if (withFile){
+			String temp;
+			BufferedReader reader=new BufferedReader(new FileReader("./input.txt"));
+			while ((temp=reader.readLine())!=null){
+				String[] seperated=temp.split(" ");
 
+				ArrayList<String> com = new ArrayList<String>();
+				com.add(seperated[0]);
+				com.add(seperated[1]);
+				filemove.add(com);
+			}
 		}
-
-
+		maxcom=filemove.size();
 	}
 
 	public boolean isFinish(boolean withFile) {
 		/* Your code */
+
+
 		if (withFile){
+			if(maxcom==fileReadPoint){
+				return true;
+			}
+
 			int count=0;
 			for(String key : finder.keySet()){
 				if(finder.get(key).getType()=='K'){
@@ -150,7 +168,62 @@ public class Board {
 	
 	public void selectObject(boolean withFile) {
 		/* Your code */
+		if (fileReadPoint==maxcom){
+			return;
+		}
+
+		skip=0;
 		if(withFile){
+			ArrayList<String> com=filemove.get(fileReadPoint);
+			selectedPosition=com.get(0);
+			selected=finder.get(selectedPosition);
+
+			if (selected.getType()==' '){
+				fileReadPoint++;
+				selectObject(withFile);
+				return;
+			}
+
+			char type=selected.getType();
+			char color=selected.getColor();
+
+			if (color=='g' && whosturn==0){
+
+				whosturn=1;
+				if (type=='K'){
+					kingCanMove(selected, withFile);
+				}else if(type=='R'){
+					rookCanMove(selected, withFile);
+				}else if(type=='E'){
+					elephantCanMove(selected, withFile);
+				}else if(type=='G'){
+					guardCanMove(selected, withFile);
+				}else if(type=='C'){
+					cannonCanMove(selected, withFile);
+				}else  if(type=='P'){
+					pwanCanMove(selected, withFile);
+				}else if(type=='N'){
+					knightCanMove(selected, withFile);
+				}
+			}else if(color=='r' && whosturn==1){
+
+				whosturn=0;
+				if (type=='K'){
+					kingCanMove(selected, withFile);
+				}else if(type=='R'){
+					rookCanMove(selected, withFile);
+				}else if(type=='E'){
+					elephantCanMove(selected, withFile);
+				}else if(type=='G'){
+					guardCanMove(selected, withFile);
+				}else if(type=='C'){
+					cannonCanMove(selected, withFile);
+				}else  if(type=='P'){
+					pwanCanMove(selected, withFile);
+				}else if(type=='N'){
+					knightCanMove(selected, withFile);
+				}
+			}
 
 		}else {
 			while(true){
@@ -210,6 +283,7 @@ public class Board {
 					}
 				}else{
 					System.out.println("Please select other piece.");
+					continue;
 				}
 			}
 		}
@@ -218,12 +292,34 @@ public class Board {
 	//check point
 	public void moveObject(boolean withFile) {
 		/* Your code */
+		if (fileReadPoint==maxcom){
+			return;
+		}
 		if(skip==1){
 			skip=0;
 			return;
 		}
 
 		if(withFile){
+			ArrayList<String> com=filemove.get(fileReadPoint);
+			String position=com.get(1);
+			gameObject movePoint=finder.get(position);
+			if (movePoint.getTarget()!='*'){
+				fileReadPoint++;
+				return;
+			}else{
+				changeObject(selectedPosition, position);
+				fileReadPoint++;
+				for (String key : finder.keySet()){
+					gameObject temp=finder.get(key);
+					if(temp.getTarget()=='*'){
+						temp.setTarget(' ');
+						finder.replace(key, temp);
+					}
+				}
+				selectedPosition="";
+				printBoard(withFile);
+			}
 
 		}else {
 			System.out.print("Move piece : ");
@@ -388,8 +484,18 @@ public class Board {
 
 		int length=canmove.size();
 		if(length==0){
-			System.out.println("Please select other piece.");
-			skip=1;
+			//System.out.println("Please select other piece.");
+			if (whosturn==1){
+				whosturn=0;
+			}else{
+				whosturn=1;
+			}
+			if (withFile){
+				return;
+			}
+
+			selectObject(withFile);
+			//skip=1;
 			return;
 		}
 
@@ -547,8 +653,18 @@ public class Board {
 
 		int length=canmove.size();
 		if(length==0){
-			System.out.println("Please select other piece.");
-			skip=1;
+			//System.out.println("Please select other piece.");
+			if (whosturn==1){
+				whosturn=0;
+			}else{
+				whosturn=1;
+			}
+			if (withFile){
+				return;
+			}
+
+			selectObject(withFile);
+			//skip=1;
 			return;
 		}
 
@@ -700,8 +816,18 @@ public class Board {
 
 		int length=canmove.size();
 		if(length==0){
-			System.out.println("Please select other piece.");
-			skip=1;
+			//System.out.println("Please select other piece.");
+			if (whosturn==1){
+				whosturn=0;
+			}else{
+				whosturn=1;
+			}
+			if (withFile){
+				return;
+			}
+
+			selectObject(withFile);
+			//skip=1;
 			return;
 		}
 
@@ -852,8 +978,18 @@ public class Board {
 
 		int length=canmove.size();
 		if(length==0){
-			System.out.println("Please select other piece.");
-			skip=1;
+			//System.out.println("Please select other piece.");
+			if (whosturn==1){
+				whosturn=0;
+			}else{
+				whosturn=1;
+			}
+			if (withFile){
+				return;
+			}
+
+			selectObject(withFile);
+			//skip=1;
 			return;
 		}
 
@@ -963,8 +1099,18 @@ public class Board {
 
 		int length=canmove.size();
 		if(length==0){
-			System.out.println("Please select other piece.");
-			skip=1;
+			//System.out.println("Please select other piece.");
+			if (whosturn==1){
+				whosturn=0;
+			}else{
+				whosturn=1;
+			}
+			if (withFile){
+				return;
+			}
+
+			selectObject(withFile);
+			//skip=1;
 			return;
 		}
 
@@ -1062,8 +1208,18 @@ public class Board {
 
 		int length=canmove.size();
 		if(length==0){
-			System.out.println("Please select other piece.");
-			skip=1;
+			//System.out.println("Please select other piece.");
+			if (whosturn==1){
+				whosturn=0;
+			}else{
+				whosturn=1;
+			}
+			if (withFile){
+				return;
+			}
+
+			selectObject(withFile);
+			//skip=1;
 			return;
 		}
 
@@ -1144,8 +1300,18 @@ public class Board {
 
 		int length=canmove.size();
 		if(length==0){
-			System.out.println("Please select other piece.");
-			skip=1;
+			//System.out.println("Please select other piece.");
+			if (whosturn==1){
+				whosturn=0;
+			}else{
+				whosturn=1;
+			}
+			if (withFile){
+				return;
+			}
+
+			selectObject(withFile);
+			//skip=1;
 			return;
 		}
 
@@ -1165,6 +1331,31 @@ public class Board {
 		/* Your code */
 		if(withFile){
 			//write the output
+
+			for (String key : finder.keySet()){
+				gameObject temp=finder.get(key);
+				String m="";
+				janggi[temp.getX()][temp.getY()]=m+temp.getColor()+temp.getType()+temp.getTarget();
+			}
+
+			System.out.print("  ");
+			for (int i=0; i<9; i++){
+				System.out.print(" "+(char)(97+i)+" ");
+			}
+			System.out.println("");
+
+			for(int i=0; i<10; i++){
+				System.out.print((char)(57-i)+" ");
+				for(int j=0; j<9; j++){
+					if(j==8){
+						System.out.println(janggi[i][j]);
+					}else{
+						System.out.print(janggi[i][j]);
+					}
+				}
+			}
+
+
 		}else{
 			for (String key : finder.keySet()){
 				gameObject temp=finder.get(key);
