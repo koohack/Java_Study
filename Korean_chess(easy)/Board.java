@@ -1,9 +1,6 @@
 import com.sun.media.sound.JARSoundbankReader;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -35,12 +32,15 @@ public class Board {
 
 	static gameObject selected;
 	static String selectedPosition;
+	static String moveposition;
 
 	static int skip=0;
 
 	static ArrayList<ArrayList<String>> filemove=new ArrayList<ArrayList<String>>();
 	static int fileReadPoint=0;
 	static int maxcom;
+	static BufferedWriter writer;
+	static File writefile;
 
 	Board(boolean withFile) throws IOException {
 		/* Your code */
@@ -117,6 +117,8 @@ public class Board {
 		if (withFile){
 			String temp;
 			BufferedReader reader=new BufferedReader(new FileReader("./input.txt"));
+			writer=new BufferedWriter(new FileWriter(new File("./output.txt")));
+			writer.write("");
 			while ((temp=reader.readLine())!=null){
 				String[] seperated=temp.split(" ");
 
@@ -129,12 +131,13 @@ public class Board {
 		maxcom=filemove.size();
 	}
 
-	public boolean isFinish(boolean withFile) {
+	public boolean isFinish(boolean withFile) throws IOException {
 		/* Your code */
 
 
 		if (withFile){
 			if(maxcom==fileReadPoint){
+				writer.close();
 				return true;
 			}
 
@@ -145,7 +148,8 @@ public class Board {
 				}
 			}
 			if(count<2){
-				System.out.println("The game was finished!!");
+				writer.close();
+				//System.out.println("The game was finished!!");
 				return true;
 			}else{
 				return false;
@@ -166,14 +170,13 @@ public class Board {
 		}
 	}
 	
-	public void selectObject(boolean withFile) {
+	public void selectObject(boolean withFile) throws IOException {
 		/* Your code */
-		if (fileReadPoint==maxcom){
-			return;
-		}
-
 		skip=0;
 		if(withFile){
+			if (fileReadPoint==maxcom){
+				return;
+			}
 			ArrayList<String> com=filemove.get(fileReadPoint);
 			selectedPosition=com.get(0);
 			selected=finder.get(selectedPosition);
@@ -290,17 +293,17 @@ public class Board {
 	}
 
 	//check point
-	public void moveObject(boolean withFile) {
+	public void moveObject(boolean withFile) throws IOException {
 		/* Your code */
-		if (fileReadPoint==maxcom){
-			return;
-		}
 		if(skip==1){
 			skip=0;
 			return;
 		}
 
 		if(withFile){
+			if (fileReadPoint==maxcom){
+				return;
+			}
 			ArrayList<String> com=filemove.get(fileReadPoint);
 			String position=com.get(1);
 			gameObject movePoint=finder.get(position);
@@ -309,6 +312,7 @@ public class Board {
 				return;
 			}else{
 				changeObject(selectedPosition, position);
+				moveposition=position;
 				fileReadPoint++;
 				for (String key : finder.keySet()){
 					gameObject temp=finder.get(key);
@@ -318,7 +322,12 @@ public class Board {
 					}
 				}
 				selectedPosition="";
-				printBoard(withFile);
+				if (withFile){
+					writer.append("Move piece : "+moveposition+"\n");
+				}else{
+					printBoard(withFile);
+				}
+
 			}
 
 		}else {
@@ -363,7 +372,7 @@ public class Board {
 		finder.replace(mp, temp1);
 	}
 
-	public void kingCanMove(gameObject king, boolean withFile){
+	public void kingCanMove(gameObject king, boolean withFile) throws IOException {
 		// Red and Green Part
 
 		canmove=new ArrayList<ArrayList<Integer>>();
@@ -508,7 +517,9 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
-
+		if (withFile){
+			writer.append("Select piece : "+selectedPosition+"\n");
+		}
 		printBoard(withFile);
 	}
 
@@ -534,7 +545,7 @@ public class Board {
 		finder.replace(marker[x][y], temp);
 	}
 
-	public void guardCanMove(gameObject guard, boolean withFile){
+	public void guardCanMove(gameObject guard, boolean withFile) throws IOException {
 		canmove=new ArrayList<ArrayList<Integer>>();
 		int nowx=guard.getX();
 		int nowy=guard.getY();
@@ -677,11 +688,13 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
-
+		if (withFile){
+			writer.append("Select piece : "+selectedPosition+"\n");
+		}
 		printBoard(withFile);
 	}
 
-	public void cannonCanMove(gameObject cannon, boolean withFile){
+	public void cannonCanMove(gameObject cannon, boolean withFile) throws IOException {
 		canmove=new ArrayList<ArrayList<Integer>>();
 		int nowx=cannon.getX();
 		int nowy=cannon.getY();
@@ -840,10 +853,13 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+		if (withFile){
+			writer.append("Select piece : "+selectedPosition+"\n");
+		}
 		printBoard(withFile);
 	}
 
-	public void elephantCanMove(gameObject elephant, boolean withFile){
+	public void elephantCanMove(gameObject elephant, boolean withFile) throws IOException {
 		canmove=new ArrayList<ArrayList<Integer>>();
 		int nowx=elephant.getX();
 		int nowy=elephant.getY();
@@ -1002,10 +1018,13 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+		if (withFile){
+			writer.append("Select piece : "+selectedPosition+"\n");
+		}
 		printBoard(withFile);
 	}
 
-	public void knightCanMove(gameObject knight, boolean withFile){
+	public void knightCanMove(gameObject knight, boolean withFile) throws IOException {
 		canmove=new ArrayList<ArrayList<Integer>>();
 		int nowx=knight.getX();
 		int nowy=knight.getY();
@@ -1123,10 +1142,13 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+		if (withFile){
+			writer.append("Select piece : "+selectedPosition+"\n");
+		}
 		printBoard(withFile);
 	}
 
-	public void rookCanMove(gameObject rook, boolean withFile){
+	public void rookCanMove(gameObject rook, boolean withFile) throws IOException {
 		canmove=new ArrayList<ArrayList<Integer>>();
 		int nowx=rook.getX();
 		int nowy=rook.getY();
@@ -1232,10 +1254,13 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+		if (withFile){
+			writer.append("Select piece : "+selectedPosition+"\n");
+		}
 		printBoard(withFile);
 	}
 
-	public void pwanCanMove(gameObject pwan, boolean withFile){
+	public void pwanCanMove(gameObject pwan, boolean withFile) throws IOException {
 		canmove=new ArrayList<ArrayList<Integer>>();
 		int nowx=pwan.getX();
 		int nowy=pwan.getY();
@@ -1324,10 +1349,13 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+		if (withFile){
+			writer.append("Select piece : "+selectedPosition+"\n");
+		}
 		printBoard(withFile);
 	}
 	
-	public void printBoard(boolean withFile) {
+	public void printBoard(boolean withFile) throws IOException {
 		/* Your code */
 		if(withFile){
 			//write the output
@@ -1338,22 +1366,23 @@ public class Board {
 				janggi[temp.getX()][temp.getY()]=m+temp.getColor()+temp.getType()+temp.getTarget();
 			}
 
-			System.out.print("  ");
+			writer.append("  ");
 			for (int i=0; i<9; i++){
-				System.out.print(" "+(char)(97+i)+" ");
+				writer.append(" "+(char)(97+i)+" ");
 			}
-			System.out.println("");
+			writer.append("\n");
 
 			for(int i=0; i<10; i++){
-				System.out.print((char)(57-i)+" ");
+				writer.append((char)(57-i)+" ");
 				for(int j=0; j<9; j++){
 					if(j==8){
-						System.out.println(janggi[i][j]);
+						writer.append(janggi[i][j]+"\n");
 					}else{
-						System.out.print(janggi[i][j]);
+						writer.append(janggi[i][j]);
 					}
 				}
 			}
+
 
 
 		}else{
@@ -1380,38 +1409,5 @@ public class Board {
 				}
 			}
 		}
-
-
-		/* Sample print sudo code */
-		/*
-		ANSI_RESET = "\033[0m";
-		ANSI_FG_BLACK = "\033[30m";
-		String ANSI_FG_WHITE = "\033[37m";
-		String ANSI_BG_BLACK = "\033[40m";
-		ANSI_BG_WHITE = "\033[47m";
-
-		Print("   a  b  c  d  e  f  g  h \n");
-		for(i = 0; i < 8; i++) {
-			Print(8-i + " ");
-			for (int j = 0; j < 8; j++) {
-				if(isBlackSquare(i, j)) {
-					// Black background, white character
-					Print(ANSI_BG_BLACK + ANSI_FG_WHITE
-							+ Piece Color
-							+ Piece Type
-							+ Possible Move Position
-							+ ANSI_RESET + ANSI_RESET);
-				} else {
-					/// White background, black character
-					Print(ANSI_BG_WHITE + ANSI_FG_BLACK
-							+ Piece Color
-							+ Piece Type
-							+ Possible Move Position
-							+ ANSI_RESET + ANSI_RESET);
-				}
-			}
-			Print("\n");
-		}
-		*/
 	}
 }
