@@ -241,7 +241,7 @@ public class Board {
 					char color=selected.getColor();
 
 					if (color=='g' && whosturn==0){
-
+						System.out.println(selectedPosition);
 						whosturn=1;
 						if (type=='K'){
 							kingCanMove(selected, withFile);
@@ -297,17 +297,28 @@ public class Board {
 		/* Your code */
 		if(skip==1){
 			skip=0;
+			fileReadPoint++;
 			return;
 		}
 
 		if(withFile){
+
 			if (fileReadPoint==maxcom){
 				return;
 			}
 			ArrayList<String> com=filemove.get(fileReadPoint);
 			String position=com.get(1);
 			gameObject movePoint=finder.get(position);
+
 			if (movePoint.getTarget()!='*'){
+				for (String key : finder.keySet()){
+					gameObject temp=finder.get(key);
+					if(temp.getTarget()=='*'){
+						temp.setTarget(' ');
+						finder.replace(key, temp);
+					}
+				}
+
 				fileReadPoint++;
 				return;
 			}else{
@@ -500,9 +511,10 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
+				skip=1;
 				return;
 			}
-
+			//fileReadPoint++;
 			selectObject(withFile);
 			//skip=1;
 			return;
@@ -517,6 +529,7 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+
 		if (withFile){
 			writer.append("Select piece : "+selectedPosition+"\n");
 		}
@@ -671,6 +684,7 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
+				skip=1;
 				return;
 			}
 
@@ -836,6 +850,7 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
+				skip=1;
 				return;
 			}
 
@@ -1001,6 +1016,7 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
+				skip=1;
 				return;
 			}
 
@@ -1125,6 +1141,7 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
+				skip=1;
 				return;
 			}
 
@@ -1237,6 +1254,7 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
+				skip=1;
 				return;
 			}
 
@@ -1332,6 +1350,7 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
+				skip=1;
 				return;
 			}
 
