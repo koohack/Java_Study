@@ -120,7 +120,7 @@ public class Board {
 			writer=new BufferedWriter(new FileWriter(new File("./output.txt")));
 			writer.write("");
 			while ((temp=reader.readLine())!=null){
-				String[] seperated=temp.split(" ");
+				String[] seperated=temp.split(", ");
 
 				ArrayList<String> com = new ArrayList<String>();
 				com.add(seperated[0]);
@@ -134,9 +134,9 @@ public class Board {
 	public boolean isFinish(boolean withFile) throws IOException {
 		/* Your code */
 
-
 		if (withFile){
 			if(maxcom==fileReadPoint){
+				//printBoard(withFile);
 				writer.close();
 				return true;
 			}
@@ -148,6 +148,7 @@ public class Board {
 				}
 			}
 			if(count<2){
+				printBoard(withFile);
 				writer.close();
 				//System.out.println("The game was finished!!");
 				return true;
@@ -162,7 +163,8 @@ public class Board {
 				}
 			}
 			if(count<2){
-				System.out.println("The game was finished!!");
+				printBoard(withFile);
+				//System.out.println("The game was finished!!");
 				return true;
 			}else{
 				return false;
@@ -183,6 +185,7 @@ public class Board {
 
 			if (selected.getType()==' '){
 				fileReadPoint++;
+				skip=1;
 				selectObject(withFile);
 				return;
 			}
@@ -191,7 +194,6 @@ public class Board {
 			char color=selected.getColor();
 
 			if (color=='g' && whosturn==0){
-
 				whosturn=1;
 				if (type=='K'){
 					kingCanMove(selected, withFile);
@@ -209,7 +211,6 @@ public class Board {
 					knightCanMove(selected, withFile);
 				}
 			}else if(color=='r' && whosturn==1){
-
 				whosturn=0;
 				if (type=='K'){
 					kingCanMove(selected, withFile);
@@ -241,7 +242,6 @@ public class Board {
 					char color=selected.getColor();
 
 					if (color=='g' && whosturn==0){
-						System.out.println(selectedPosition);
 						whosturn=1;
 						if (type=='K'){
 							kingCanMove(selected, withFile);
@@ -261,7 +261,6 @@ public class Board {
 						break;
 
 					}else if(color=='r' && whosturn==1){
-
 						whosturn=0;
 						if (type=='K'){
 							kingCanMove(selected, withFile);
@@ -281,11 +280,13 @@ public class Board {
 						break;
 
 					}else{
-						System.out.println("Please select other piece.");
+						//System.out.println("Please select other piece.");
+						printBoard(withFile);
 						continue;
 					}
 				}else{
-					System.out.println("Please select other piece.");
+					//System.out.println("Please select other piece.");
+					printBoard(withFile);
 					continue;
 				}
 			}
@@ -295,6 +296,7 @@ public class Board {
 	//check point
 	public void moveObject(boolean withFile) throws IOException {
 		/* Your code */
+
 		if(skip==1){
 			skip=0;
 			fileReadPoint++;
@@ -306,6 +308,7 @@ public class Board {
 			if (fileReadPoint==maxcom){
 				return;
 			}
+
 			ArrayList<String> com=filemove.get(fileReadPoint);
 			String position=com.get(1);
 			gameObject movePoint=finder.get(position);
@@ -318,13 +321,25 @@ public class Board {
 						finder.replace(key, temp);
 					}
 				}
+				if (whosturn==1){
+					whosturn=0;
+				}else{
+					whosturn=1;
+				}
 
+				skip=1;
 				fileReadPoint++;
 				return;
+
 			}else{
+				//write select part
+				writer.append("Select piece : "+selectedPosition+"\n");
+				printBoard(withFile);
+
 				changeObject(selectedPosition, position);
 				moveposition=position;
 				fileReadPoint++;
+
 				for (String key : finder.keySet()){
 					gameObject temp=finder.get(key);
 					if(temp.getTarget()=='*'){
@@ -332,13 +347,9 @@ public class Board {
 						finder.replace(key, temp);
 					}
 				}
-				selectedPosition="";
-				if (withFile){
-					writer.append("Move piece : "+moveposition+"\n");
-				}else{
-					printBoard(withFile);
-				}
 
+				writer.append("Move piece : "+moveposition+"\n");
+				selectedPosition="";
 			}
 
 		}else {
@@ -347,7 +358,8 @@ public class Board {
 
 			gameObject movePoint=finder.get(position);
 			if (movePoint.getTarget()!='*'){
-				System.out.println("Please select other move piece.");
+				//System.out.println("Please select other move piece.");
+				printBoard(withFile);
 				moveObject(withFile);
 			}else{
 				changeObject(selectedPosition, position);
@@ -511,7 +523,8 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
-				skip=1;
+				fileReadPoint++;
+				selectObject(withFile);
 				return;
 			}
 			//fileReadPoint++;
@@ -529,11 +542,11 @@ public class Board {
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
-
 		if (withFile){
-			writer.append("Select piece : "+selectedPosition+"\n");
+			//writer.append("Select piece : "+selectedPosition+"\n");
+		}else{
+			printBoard(withFile);
 		}
-		printBoard(withFile);
 	}
 
 	public boolean isNotMyTeam(gameObject me, int targetx, int targety){
@@ -599,7 +612,7 @@ public class Board {
 				temp.add(nowy-1);
 				canmove.add(temp);
 			}
-			if(nowx-1 >= maxup && nowy+1 >= maxright && isNotMyTeam(guard, nowx-1, nowy+1)){
+			if(nowx-1 >= maxup && nowy+1 <= maxright && isNotMyTeam(guard, nowx-1, nowy+1)){
 				ArrayList<Integer> temp=new ArrayList<Integer>();
 				temp.add(nowx-1);
 				temp.add(nowy+1);
@@ -655,7 +668,7 @@ public class Board {
 				temp.add(nowy-1);
 				canmove.add(temp);
 			}
-			if(nowx-1 >= maxup && nowy+1 >= maxright && isNotMyTeam(guard, nowx-1, nowy+1)){
+			if(nowx-1 >= maxup && nowy+1 <= maxright && isNotMyTeam(guard, nowx-1, nowy+1)){
 				ArrayList<Integer> temp=new ArrayList<Integer>();
 				temp.add(nowx-1);
 				temp.add(nowy+1);
@@ -684,28 +697,31 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
-				skip=1;
+				fileReadPoint++;
+				selectObject(withFile);
 				return;
 			}
-
+			//fileReadPoint++;
 			selectObject(withFile);
 			//skip=1;
 			return;
 		}
 
-		for(ArrayList<Integer> item : canmove) {
-			int x = item.get(0);
-			int y = item.get(1);
-			String position = marker[x][y];
+		for(ArrayList<Integer> item : canmove){
+			int x=item.get(0);
+			int y=item.get(1);
+			String position=marker[x][y];
 
-			gameObject temp = finder.get(position);
+			gameObject temp=finder.get(position);
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+
 		if (withFile){
-			writer.append("Select piece : "+selectedPosition+"\n");
+			//writer.append("Select piece : "+selectedPosition+"\n");
+		}else{
+			printBoard(withFile);
 		}
-		printBoard(withFile);
 	}
 
 	public void cannonCanMove(gameObject cannon, boolean withFile) throws IOException {
@@ -727,10 +743,18 @@ public class Board {
 					for(int j=downend+1; j<10; j++){
 						if(finder.get(marker[j][nowy]).getType()!=' '){
 							if(isNotMyTeam(cannon, j, nowy) || finder.get(marker[j][nowy]).getType()!='C'){
+								if (finder.get(marker[j][nowy]).getType()=='C'){
+									break;
+								}
+
 								ArrayList<Integer> t=new ArrayList<Integer>();
 								t.add(j);
 								t.add(nowy);
 								canmove.add(t);
+
+								if (finder.get(marker[j][nowy]).getType()!=' '){
+									break;
+								}
 							}else{
 								break;
 							}
@@ -759,10 +783,18 @@ public class Board {
 					for(int j=upend-1; j>=0; j--){
 						if(finder.get(marker[j][nowy]).getType()!=' '){
 							if(isNotMyTeam(cannon, j, nowy) && finder.get(marker[j][nowy]).getType()!='C'){
+								if (finder.get(marker[j][nowy]).getType()=='C'){
+									break;
+								}
+
 								ArrayList<Integer> t=new ArrayList<Integer>();
 								t.add(j);
 								t.add(nowy);
 								canmove.add(t);
+
+								if (finder.get(marker[j][nowy]).getType()!=' '){
+									break;
+								}
 							}else{
 								break;
 							}
@@ -791,10 +823,18 @@ public class Board {
 					for(int j=leftend-1; j>=0; j--){
 						if(finder.get(marker[nowx][j]).getType()!=' '){
 							if(isNotMyTeam(cannon, nowx, j) && finder.get(marker[nowx][j]).getType()!='C'){
+								if (finder.get(marker[nowx][j]).getType()=='C'){
+									break;
+								}
+
 								ArrayList<Integer> t=new ArrayList<Integer>();
 								t.add(nowx);
 								t.add(j);
 								canmove.add(t);
+
+								if (finder.get(marker[nowx][j]).getType()!=' '){
+									break;
+								}
 							}else{
 								break;
 							}
@@ -823,10 +863,17 @@ public class Board {
 					for(int j=rightend+1; j<9; j++){
 						if(finder.get(marker[nowx][j]).getType()!=' '){
 							if(isNotMyTeam(cannon, nowx, j) && finder.get(marker[nowx][j]).getType()!='C'){
+								if (finder.get(marker[nowx][j]).getType()=='C'){
+									break;
+								}
+
 								ArrayList<Integer> t=new ArrayList<Integer>();
 								t.add(nowx);
 								t.add(j);
 								canmove.add(t);
+								if (finder.get(marker[nowx][j]).getType()!=' '){
+									break;
+								}
 							}else{
 								break;
 							}
@@ -850,28 +897,31 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
-				skip=1;
+				fileReadPoint++;
+				selectObject(withFile);
 				return;
 			}
-
+			//fileReadPoint++;
 			selectObject(withFile);
 			//skip=1;
 			return;
 		}
 
-		for(ArrayList<Integer> item : canmove) {
-			int x = item.get(0);
-			int y = item.get(1);
-			String position = marker[x][y];
+		for(ArrayList<Integer> item : canmove){
+			int x=item.get(0);
+			int y=item.get(1);
+			String position=marker[x][y];
 
-			gameObject temp = finder.get(position);
+			gameObject temp=finder.get(position);
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+
 		if (withFile){
-			writer.append("Select piece : "+selectedPosition+"\n");
+			//writer.append("Select piece : "+selectedPosition+"\n");
+		}else{
+			printBoard(withFile);
 		}
-		printBoard(withFile);
 	}
 
 	public void elephantCanMove(gameObject elephant, boolean withFile) throws IOException {
@@ -1016,28 +1066,31 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
-				skip=1;
+				fileReadPoint++;
+				selectObject(withFile);
 				return;
 			}
-
+			//fileReadPoint++;
 			selectObject(withFile);
 			//skip=1;
 			return;
 		}
 
-		for(ArrayList<Integer> item : canmove) {
-			int x = item.get(0);
-			int y = item.get(1);
-			String position = marker[x][y];
+		for(ArrayList<Integer> item : canmove){
+			int x=item.get(0);
+			int y=item.get(1);
+			String position=marker[x][y];
 
-			gameObject temp = finder.get(position);
+			gameObject temp=finder.get(position);
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+
 		if (withFile){
-			writer.append("Select piece : "+selectedPosition+"\n");
+			//writer.append("Select piece : "+selectedPosition+"\n");
+		}else{
+			printBoard(withFile);
 		}
-		printBoard(withFile);
 	}
 
 	public void knightCanMove(gameObject knight, boolean withFile) throws IOException {
@@ -1080,10 +1133,12 @@ public class Board {
 					}
 				}
 				if(nowx+2<10 && nowy-1>=0){
-					ArrayList<Integer> t=new ArrayList<Integer>();
-					t.add(nowx+2);
-					t.add(nowy-1);
-					canmove.add(t);
+					if (isNotMyTeam(knight, nowx+2, nowy-1)){
+						ArrayList<Integer> t=new ArrayList<Integer>();
+						t.add(nowx+2);
+						t.add(nowy-1);
+						canmove.add(t);
+					}
 				}
 			}
 		}
@@ -1141,28 +1196,31 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
-				skip=1;
+				fileReadPoint++;
+				selectObject(withFile);
 				return;
 			}
-
+			//fileReadPoint++;
 			selectObject(withFile);
 			//skip=1;
 			return;
 		}
 
-		for(ArrayList<Integer> item : canmove) {
-			int x = item.get(0);
-			int y = item.get(1);
-			String position = marker[x][y];
+		for(ArrayList<Integer> item : canmove){
+			int x=item.get(0);
+			int y=item.get(1);
+			String position=marker[x][y];
 
-			gameObject temp = finder.get(position);
+			gameObject temp=finder.get(position);
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+
 		if (withFile){
-			writer.append("Select piece : "+selectedPosition+"\n");
+			//writer.append("Select piece : "+selectedPosition+"\n");
+		}else{
+			printBoard(withFile);
 		}
-		printBoard(withFile);
 	}
 
 	public void rookCanMove(gameObject rook, boolean withFile) throws IOException {
@@ -1218,6 +1276,7 @@ public class Board {
 						t.add(i);
 						canmove.add(t);
 					}
+					break;
 				}else{
 					ArrayList<Integer> t = new ArrayList<Integer>();
 					t.add(nowx);
@@ -1235,12 +1294,13 @@ public class Board {
 						t.add(nowx);
 						t.add(i);
 						canmove.add(t);
-					}else{
-						ArrayList<Integer> t = new ArrayList<Integer>();
-						t.add(nowx);
-						t.add(i);
-						canmove.add(t);
 					}
+					break;
+				}else{
+					ArrayList<Integer> t = new ArrayList<Integer>();
+					t.add(nowx);
+					t.add(i);
+					canmove.add(t);
 				}
 			}
 		}
@@ -1254,28 +1314,31 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
-				skip=1;
+				fileReadPoint++;
+				selectObject(withFile);
 				return;
 			}
-
+			//fileReadPoint++;
 			selectObject(withFile);
 			//skip=1;
 			return;
 		}
 
-		for(ArrayList<Integer> item : canmove) {
-			int x = item.get(0);
-			int y = item.get(1);
-			String position = marker[x][y];
+		for(ArrayList<Integer> item : canmove){
+			int x=item.get(0);
+			int y=item.get(1);
+			String position=marker[x][y];
 
-			gameObject temp = finder.get(position);
+			gameObject temp=finder.get(position);
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+
 		if (withFile){
-			writer.append("Select piece : "+selectedPosition+"\n");
+			//writer.append("Select piece : "+selectedPosition+"\n");
+		}else{
+			printBoard(withFile);
 		}
-		printBoard(withFile);
 	}
 
 	public void pwanCanMove(gameObject pwan, boolean withFile) throws IOException {
@@ -1350,35 +1413,43 @@ public class Board {
 				whosturn=1;
 			}
 			if (withFile){
-				skip=1;
+				fileReadPoint++;
+				selectObject(withFile);
 				return;
 			}
-
+			//fileReadPoint++;
 			selectObject(withFile);
 			//skip=1;
 			return;
 		}
 
-		for(ArrayList<Integer> item : canmove) {
-			int x = item.get(0);
-			int y = item.get(1);
-			String position = marker[x][y];
+		for(ArrayList<Integer> item : canmove){
+			int x=item.get(0);
+			int y=item.get(1);
+			String position=marker[x][y];
 
-			gameObject temp = finder.get(position);
+			gameObject temp=finder.get(position);
 			temp.setTarget('*');
 			finder.replace(position, temp);
 		}
+
 		if (withFile){
-			writer.append("Select piece : "+selectedPosition+"\n");
+			//writer.append("Select piece : "+selectedPosition+"\n");
+		}else{
+			printBoard(withFile);
 		}
-		printBoard(withFile);
 	}
 	
 	public void printBoard(boolean withFile) throws IOException {
 		/* Your code */
+		if (skip==1){
+			skip=0;
+			return;
+		}
+
+
 		if(withFile){
 			//write the output
-
 			for (String key : finder.keySet()){
 				gameObject temp=finder.get(key);
 				String m="";
@@ -1401,8 +1472,6 @@ public class Board {
 					}
 				}
 			}
-
-
 
 		}else{
 			for (String key : finder.keySet()){
