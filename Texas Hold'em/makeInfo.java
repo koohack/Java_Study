@@ -1,4 +1,5 @@
-class makeInfo {
+import java.io.Serializable;
+class makeInfo implements Serializable{
     private String nickName;
     private String message;
     private int cmd;

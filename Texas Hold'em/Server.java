@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -8,7 +9,7 @@ public class Server {
     static final int port=10800;
 
     static ServerSocket serverSocket = null;
-    static InputStream inputStream;
+    static InputStream inputStream=null;
     static BufferedReader bufferedReader= null;
     static OutputStream outputStream= null;
     static OutputStreamWriter outputStreamWriter = null;
@@ -18,6 +19,7 @@ public class Server {
 
     public static void main(String args[]) throws IOException {
         serverSocket = new ServerSocket();
+        list=new ArrayList<Chatting>();
 
         // bind socket
         InetAddress inetAddress = InetAddress.getLocalHost();
@@ -43,6 +45,7 @@ class Chatting extends Thread{
     private ObjectOutputStream writer;
     private List <Chatting> list;
     private String nickName;
+    private makeInfo info=null;
 
     public Chatting(Socket socket, List<Chatting> list) throws IOException {
         this.socket=socket;
@@ -54,8 +57,10 @@ class Chatting extends Thread{
     public void run(){
         while (true){
             try {
-                makeInfo info= (makeInfo) reader.readObject();
+                info= (makeInfo) reader.readObject();
+
                 nickName=info.getNickName();
+
 
                 // 0 is end the system
                 if(info.getCmd()==0){
@@ -67,21 +72,35 @@ class Chatting extends Thread{
                     reader.close();
                     writer.close();
                     socket.close();
-
                     list.remove(this);
-
+                }else if(info.getCmd()==1){
+                    // 1 is join
+                    makeInfo sendInfo = new makeInfo();
+                    sendInfo.setCmd(2);
+                    sendInfo.setMessage(nickName+"님이 입장하였습니다.");
+                    //broadCast(sendInfo);
+                    System.out.println("입장함");
+                }else if(info.getCmd()==2){
+                    makeInfo sendInfo=new makeInfo();
+                    sendInfo.setMessage("["+nickName+"]"+" : "+info.getMessage());
+                    //broadCast(sendInfo);
                 }
-
-
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+        }// while loop
+    }
+
+    public void broadCast(makeInfo sendInfo) throws IOException {
+        for(Chatting chatthread : list){
+            chatthread.writer.writeObject(sendInfo);
+            chatthread.writer.flush();
         }
     }
+
+
 
 }
 
