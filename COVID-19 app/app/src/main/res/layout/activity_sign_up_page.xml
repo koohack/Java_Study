@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_backgound"
+    android:orientation="vertical"
+    tools:context=".sign_up_page">
+
+    <TextView
+        android:id="@+id/just_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="center"
+        android:textSize="40dp"
+        android:fontFamily="@font/font4"
+        android:text="SIGN UP"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/just_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/font2"
+        android:textSize="18dp"
+        android:text="User ID:"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/User_ID_edt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ID"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        />
+
+    <TextView
+        android:id="@+id/just_text3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Password:"
+        android:fontFamily="@font/font2"
+        android:textStyle="bold"
+        android:textSize="18dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"/>
+
+    <EditText
+        android:id="@+id/Password_edt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Passeord"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/just_text4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name:"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:textSize="18dp"
+        android:fontFamily="@font/font2"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/Name_edt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Name"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        />
+
+    <TextView
+        android:id="@+id/just_text5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="If you are a owner, please check the box"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="15dp"
+        android:textStyle="bold"/>
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Owner"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/font2"/>
+
+    <Button
+        android:id="@+id/sign_up_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_button"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        android:fontFamily="@font/font3"
+        android:textColor="#87CEEB"
+        android:text="SIGN UP" />
+
+
+</LinearLayout>

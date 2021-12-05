@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/drawerLayout"
+    android:orientation="vertical"
+    android:background="@drawable/main_backgound"
+    tools:context=".data_page"
+    >
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/just_text5"
+                            android:layout_width="110dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="15dp"
+                            android:layout_weight="1"
+                            android:text="어제 코로나 확진자 수:"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/yesterday"
+                            android:layout_width="30dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginRight="15dp"
+                            android:layout_weight="1"
+                            android:text="number"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/just_text6"
+                            android:layout_width="110dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="15dp"
+                            android:layout_weight="1"
+                            android:text="오늘 코로나 확진자 수: "
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/today"
+                            android:layout_width="30dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginRight="15dp"
+                            android:layout_weight="1"
+                            android:text="number"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/just_text7"
+                            android:layout_width="55dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="15dp"
+                            android:layout_weight="1"
+                            android:text="전일대비(확진자):"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/compare"
+                            android:layout_width="50dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:text="number" />
+
+                        <TextView
+                            android:id="@+id/just_text8"
+                            android:layout_width="45dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:text="사망자 수:"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/death"
+                            android:layout_width="50dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="15dp"
+                            android:layout_weight="1"
+                            android:text="number"
+                            android:textColor="#FF0000" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:orientation="horizontal">
+
+
+                    <Button
+                        android:id="@+id/sodok_shoplist"
+                        android:layout_width="65dp"
+                        android:layout_height="120dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_button"
+                        android:text="Disinfection Specialist" />
+
+                    <Button
+                        android:id="@+id/xincheng"
+                        android:layout_width="65dp"
+                        android:layout_height="120dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_button"
+                        android:text="NEW\nDISINFECTION" />
+
+                    <Button
+                        android:id="@+id/call_119"
+                        android:layout_width="65dp"
+                        android:layout_height="120dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_button"
+                        android:text="Call\n119" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/just_text9"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="20dp"
+                    android:text="최근 2일 내에 소독한 가게 : "
+                    android:textSize="19dp" />
+
+                <ListView
+                    android:id="@+id/days2"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
