@@ -6,35 +6,40 @@ import java.util.Scanner;
 
 public class Server {
     //private final String ipAddress;
-    static final int port=10800;
+    static final int port=5000;
 
     static ServerSocket serverSocket = null;
-    static InputStream inputStream=null;
-    static BufferedReader bufferedReader= null;
-    static OutputStream outputStream= null;
-    static OutputStreamWriter outputStreamWriter = null;
-    static PrintWriter printWriter=null;
-    static Scanner scanner = new Scanner(System.in);
     static List<Chatting> list;
 
-    public static void main(String args[]) throws IOException {
-        serverSocket = new ServerSocket();
+    public static void main(String args[]) throws IOException, ClassNotFoundException {
+        serverSocket = new ServerSocket(port);
         list=new ArrayList<Chatting>();
 
         // bind socket
-        InetAddress inetAddress = InetAddress.getLocalHost();
-        String localhost = inetAddress.getHostAddress();
-        serverSocket.bind(new InetSocketAddress(localhost, port));
-        System.out.println("[server] binding "+localhost);
+        //InetAddress inetAddress = InetAddress.getLocalHost();
+        //String localhost = inetAddress.getHostAddress();
+        //serverSocket.bind(new InetSocketAddress(localhost, port));
+        //System.out.println("[server] binding "+localhost);
+        System.out.println("===========================");
+        System.out.println("Waiting for connection");
+        Socket socket = serverSocket.accept();
+        System.out.println("connected");
+        ObjectInputStream reader;
+        ObjectOutputStream writer;
+        reader=new ObjectInputStream(socket.getInputStream());
+
+
+        makeInfo read= (makeInfo) reader.readObject();
+        System.out.println(read.getMessage());
 
         while(true) {
-            System.out.println("===========================");
-            System.out.println("Waiting for connection");
-
-            Socket socket = serverSocket.accept();
-            Chatting chattingthread = new Chatting(socket, list);
-            list.add(chattingthread);
-            chattingthread.start();
+            int a=1;
+            if(a==1){
+                break;
+            }
+            //Chatting chattingthread = new Chatting(socket, list);
+            //list.add(chattingthread);
+            //chattingthread.start();
         }
     }
 }
@@ -57,34 +62,22 @@ class Chatting extends Thread{
     public void run(){
         while (true){
             try {
-                info= (makeInfo) reader.readObject();
-
+                if(socket.isConnected()){
+                    info= (makeInfo) reader.readObject();
+                }else{
+                    break;
+                }
                 nickName=info.getNickName();
 
+                System.out.println(info.getMessage());
 
-                // 0 is end the system
-                if(info.getCmd()==0){
-                    //makeInfo sendInfo=new makeInfo();
-                    //sendInfo.setMessage("exit");
-                    //sendInfo.setCmd(0);
-                    //writer.writeObject(sendInfo);
-                    //writer.flush();
-                    reader.close();
-                    writer.close();
-                    socket.close();
-                    list.remove(this);
-                }else if(info.getCmd()==1){
-                    // 1 is join
-                    makeInfo sendInfo = new makeInfo();
-                    sendInfo.setCmd(2);
-                    sendInfo.setMessage(nickName+"님이 입장하였습니다.");
-                    //broadCast(sendInfo);
-                    System.out.println("입장함");
-                }else if(info.getCmd()==2){
-                    makeInfo sendInfo=new makeInfo();
-                    sendInfo.setMessage("["+nickName+"]"+" : "+info.getMessage());
-                    //broadCast(sendInfo);
-                }
+                makeInfo sender = new makeInfo();
+
+                // cmd 1 is simple send check send
+                sender.setCmd(1);
+                sender.setMessage("okokok");
+                broadCast(sender);
+
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
