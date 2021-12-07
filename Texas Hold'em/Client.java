@@ -1,34 +1,31 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Scanner;
 
 public class Client {
 
     static ObjectInputStream reader;
     static ObjectOutputStream writer;
-    static String nickName;
-
+    static Scanner scanner = new Scanner(System.in);
+    static BufferedReader br;
+    static PrintWriter pw;
 
     public static void main(String args[]) throws IOException {
         InetAddress inetAddress = InetAddress.getLocalHost();
         String localhost = inetAddress.getHostAddress();
-        Socket socket=new Socket(localhost, 10800);
-        System.out.println("==========================");
-        System.out.println("Success to connect with server");
+        Socket socket=new Socket(localhost, 5000);
+        //String line=scanner.next();
 
-        writer=new ObjectOutputStream(socket.getOutputStream());
-        reader=new ObjectInputStream(socket.getInputStream());
+        br=new BufferedReader(new InputStreamReader(System.in));
+        pw=new PrintWriter(socket.getOutputStream(), true);
 
-        makeInfo sendInfo=new makeInfo();
-        sendInfo.setCmd(2);
-        sendInfo.setMessage("이히");
-        sendInfo.setNickName("망고");
 
-        writer.writeObject(sendInfo);
-        writer.flush();
+        String line="";
+        while((line=br.readLine())!=null){
+            pw.println(line);
+        }
     }
 }

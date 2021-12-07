@@ -22,9 +22,4 @@ class makeInfo implements Serializable{
     public void setCmd(int cmd){
         this.cmd=cmd;
     }
-
-
-
-
-
 }
