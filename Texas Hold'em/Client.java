@@ -10,64 +10,36 @@ public class Client {
     static ObjectInputStream reader;
     static ObjectOutputStream writer;
     static BufferedReader br;
-    static PrintWriter pw;
+    private String nickName;
+    private Socket socket;
 
-    public static void main(String args[]) throws IOException {
+    public Client(String nickName) throws IOException {
+        // set Nickname
+        this.nickName=nickName;
+
+        // connect to the server
         InetAddress inetAddress = InetAddress.getLocalHost();
         String localhost = inetAddress.getHostAddress();
-        Socket socket=new Socket(localhost, 5000);
-        Scanner scanner = new Scanner(System.in);
-        // for read
-        //clientThread thread = new clientThread(socket);
-        System.out.println("test");
-        writer=new ObjectOutputStream(socket.getOutputStream());
-        System.out.println("mei");
-        //reader=new ObjectInputStream(socket.getInputStream());
+        this.socket=new Socket(localhost, 5000);
+        System.out.println("=========================");
+        System.out.println("Connected");
 
-        // for write
-        while(true){
-            System.out.print("get line : ");
-            String message=scanner.next();
-            makeInfo sender=new makeInfo();
-            sender.setMessage(message);
-            System.out.println("sent");
-            writer.writeObject(sender);
-            writer.flush();
-        }
-
-
-    }
-}
-
-class clientThread extends Thread {
-    private Socket socket;
-    private ObjectInputStream reader;
-    private ObjectOutputStream writer;
-    private String nickName;
-
-    public clientThread(Socket socket) throws IOException {
-        this.socket=socket;
+        // for send to server
         writer=new ObjectOutputStream(socket.getOutputStream());
         reader=new ObjectInputStream(socket.getInputStream());
     }
 
-    public void run(){
-        while(true){
-            try {
-                makeInfo read= (makeInfo) reader.readObject();
-                System.out.println(read.getMessage());
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-
+    public Socket getSocket(){
+        return this.socket;
+    }
+    public ObjectOutputStream getWriter(){
+        return writer;
+    }
+    public ObjectInputStream getReader(){
+        return reader;
     }
 
 
 
 }
+

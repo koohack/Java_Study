@@ -63,16 +63,13 @@ class Chatting extends Thread{
 
                 makeInfo sender = new makeInfo();
 
-                // cmd 1 is simple send check send
-                //sender.setCmd(1);
-                //sender.setMessage("okokok");
-                //broadCast(sender);
-
             } catch (IOException e) {
                 e.printStackTrace();
+                this.list.remove(this);
                 break;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                this.list.remove(this);
                 break;
             }
         }// while loop
