@@ -3,6 +3,7 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Server {
     //private final String ipAddress;
@@ -12,34 +13,22 @@ public class Server {
     static List<Chatting> list;
 
     public static void main(String args[]) throws IOException, ClassNotFoundException {
+        // get serverSocket
         serverSocket = new ServerSocket(port);
+        System.out.println("[server] binding localhost");
         list=new ArrayList<Chatting>();
 
-        // bind socket
-        //InetAddress inetAddress = InetAddress.getLocalHost();
-        //String localhost = inetAddress.getHostAddress();
-        //serverSocket.bind(new InetSocketAddress(localhost, port));
-        //System.out.println("[server] binding "+localhost);
-        System.out.println("===========================");
-        System.out.println("Waiting for connection");
-        Socket socket = serverSocket.accept();
-        System.out.println("connected");
-        ObjectInputStream reader;
-        ObjectOutputStream writer;
-        reader=new ObjectInputStream(socket.getInputStream());
-
-
-        makeInfo read= (makeInfo) reader.readObject();
-        System.out.println(read.getMessage());
-
         while(true) {
-            int a=1;
-            if(a==1){
-                break;
-            }
-            //Chatting chattingthread = new Chatting(socket, list);
-            //list.add(chattingthread);
-            //chattingthread.start();
+            System.out.println("===========================");
+            System.out.println("Waiting for socket connection");
+            Socket socket = serverSocket.accept();
+            System.out.println("===========================");
+            System.out.println("connected");
+
+            //make thread for one client
+            Chatting chattingthread = new Chatting(socket, list);
+            list.add(chattingthread);
+            chattingthread.start();
         }
     }
 }
@@ -60,6 +49,7 @@ class Chatting extends Thread{
     }
 
     public void run(){
+
         while (true){
             try {
                 if(socket.isConnected()){
@@ -74,14 +64,16 @@ class Chatting extends Thread{
                 makeInfo sender = new makeInfo();
 
                 // cmd 1 is simple send check send
-                sender.setCmd(1);
-                sender.setMessage("okokok");
-                broadCast(sender);
+                //sender.setCmd(1);
+                //sender.setMessage("okokok");
+                //broadCast(sender);
 
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                break;
             }
         }// while loop
     }
