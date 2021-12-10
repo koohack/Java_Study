@@ -6,11 +6,14 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Server {
-    //private final String ipAddress;
+    // private final String ipAddress;
     static final int port=5000;
-
     static ServerSocket serverSocket = null;
     static List<Chatting> list;
+
+    //
+    static int[] userlist=new int[4];
+
 
     public static void main(String args[]) throws IOException, ClassNotFoundException {
         // get serverSocket
@@ -81,8 +84,23 @@ class Chatting extends Thread{
             chatthread.writer.flush();
         }
     }
+}
+
+class gameThread extends Thread{
+
+    public gameThread(){
+
+    }
+
+    public void run(){
+        while(true){
 
 
+
+
+
+        }
+    }
 
 }
 
